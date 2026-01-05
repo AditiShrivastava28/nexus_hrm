@@ -1,19 +1,18 @@
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
-// Fix: Use interface augmentation to add API_KEY to the environment variables.
-// This avoids the "Subsequent variable declarations must have the same type" error
-// that occurs when redeclaring the global 'process' variable.
+// Fix: Declare process using the 'Process' interface to merge with existing global definitions and avoid type mismatch errors.
 declare global {
   interface ProcessEnv {
     API_KEY: string;
     [key: string]: string | undefined;
   }
-
   interface Process {
     env: ProcessEnv;
   }
+  var process: Process;
 }
 
 const rootElement = document.getElementById('root');
