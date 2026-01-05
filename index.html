@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NexusHR</title>
+    <title>NexusHR | Employee Experience Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -12,12 +11,21 @@
         theme: {
           extend: {
             colors: {
+              indigo: {
+                50: '#f5f7ff',
+                100: '#ebf0fe',
+                200: '#ced9fd',
+                500: '#6366f1',
+                600: '#4f46e5',
+                700: '#4338ca',
+              },
               zinc: {
-                850: '#1f2937', 
+                850: '#1f2937',
               }
             },
             animation: {
               'float': 'float 6s ease-in-out infinite',
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             },
             keyframes: {
               float: {
@@ -34,7 +42,6 @@
       body {
         font-family: 'Inter', sans-serif;
         margin: 0;
-        overflow: hidden; 
         transition: background-color 0.3s ease;
       }
       
@@ -49,68 +56,18 @@
         font-family: 'JetBrains Mono', monospace;
       }
 
-      .dark .bg-deep-space {
-        position: fixed;
-        inset: 0;
-        background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 40%, #020617 100%);
-        z-index: -3;
-        display: block;
-      }
-      
-      html:not(.dark) .bg-deep-space,
-      html:not(.dark) .bg-stars,
-      html:not(.dark) .bg-shine,
-      html:not(.dark) video {
-        display: none !important;
+      /* Keka-style Subtle Gradients */
+      .dark body {
+        background-color: #030712;
+        background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #030712 100%);
       }
 
       html:not(.dark) body {
-        background-color: #f8fafc; 
-        background-image: radial-gradient(circle at 50% 0%, #e2e8f0 0%, #f8fafc 50%);
+        background-color: #f8fafc;
+        background-image: radial-gradient(circle at 50% 0%, #eef2ff 0%, #f8fafc 50%);
       }
 
-      @keyframes starDrift {
-        from { background-position: 0 0; }
-        to { background-position: 500px 500px; }
-      }
-
-      .bg-stars {
-        position: fixed;
-        inset: 0;
-        background-image: 
-            radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.5), transparent),
-            radial-gradient(1.5px 1.5px at 60px 80px, rgba(255,255,255,0.3), transparent),
-            radial-gradient(1px 1px at 120px 150px, rgba(255,255,255,0.4), transparent),
-            radial-gradient(2px 2px at 200px 250px, rgba(255,255,255,0.2), transparent);
-        background-size: 400px 400px;
-        opacity: 0.6;
-        z-index: -2;
-        animation: starDrift 120s linear infinite;
-        pointer-events: none;
-      }
-
-      @keyframes shimmerSweep {
-        0% { transform: translateX(-100%) rotate(30deg); opacity: 0; }
-        20% { opacity: 0.1; }
-        50% { opacity: 0.2; }
-        80% { opacity: 0.1; }
-        100% { transform: translateX(100%) rotate(30deg); opacity: 0; }
-      }
-
-      .bg-shine {
-        position: fixed;
-        top: -50%;
-        left: -50%;
-        right: -50%;
-        bottom: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(90deg, transparent 0%, rgba(6,182,212,0.15) 50%, transparent 100%);
-        z-index: -1;
-        animation: shimmerSweep 15s ease-in-out infinite;
-        pointer-events: none;
-      }
-
+      /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -119,53 +76,23 @@
         background: transparent; 
       }
       ::-webkit-scrollbar-thumb {
-        background: #cbd5e1; 
+        background: #cbd5e1;
         border-radius: 4px;
       }
       .dark ::-webkit-scrollbar-thumb {
-        background: #3f3f46; 
+        background: #334155;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #06b6d4; 
+        background: #6366f1;
       }
 
-      @page {
-        size: A4;
-        margin: 0;
-      }
       @media print {
-        body {
-          background-color: white !important;
-          color: black !important;
-          overflow: visible !important;
-        }
-        .bg-deep-space, .bg-stars, .bg-shine, video,
-        #main-sidebar, 
-        #no-print-topbar,
-        #no-print-header,
-        #no-print-form,
-        #no-print-chat {
+        #main-sidebar, #no-print-topbar, #no-print-chat {
           display: none !important;
         }
         #main-content {
           margin-left: 0 !important;
-          height: auto !important;
-          display: block !important;
           width: 100% !important;
-        }
-        #resume-preview {
-          transform: none !important;
-          box-shadow: none !important;
-          width: 100% !important; 
-          min-height: auto !important;
-          padding: 0 !important;
-          margin: 0 !important;
-          page-break-after: always;
-          border: none !important;
-          background: white !important;
-        }
-        ::-webkit-scrollbar {
-          display: none;
         }
       }
     </style>
@@ -175,16 +102,12 @@
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-    "vite": "https://esm.sh/vite@^7.3.0",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

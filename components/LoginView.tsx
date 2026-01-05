@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { IconMail, IconKey, IconShield, IconUser, IconXCircle, IconSun, IconMoon } from './Icons';
 import { authenticatedFetch } from '../constants';
@@ -14,7 +13,6 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, currentTheme, set
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Form State
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -26,13 +24,8 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, currentTheme, set
 
     try {
       const endpoint = isLogin ? '/auth/login' : '/auth/register';
-      
-      const payload = isLogin 
-        ? { email, password }
-        : { email, password, full_name: fullName };
+      const payload = isLogin ? { email, password } : { email, password, full_name: fullName };
 
-      // Using authenticatedFetch allows us to use the Mock Fallback system defined in constants.ts
-      // if the real backend is down.
       const response = await authenticatedFetch(endpoint, {
         method: 'POST',
         body: JSON.stringify(payload)
@@ -41,140 +34,126 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, currentTheme, set
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || 'Authentication failed. Please check your credentials.');
+        throw new Error(data.detail || 'Authentication failed. Please verify credentials.');
       }
 
-      // Success
       if (isLogin) {
         localStorage.setItem('token', data.access_token);
-        onLoginSuccess(data.user || { name: 'User', role: 'Employee' });
+        onLoginSuccess(data.user || { name: 'Alex Rivera', role: 'Senior Product Designer' });
       } else {
         setIsLogin(true);
-        setError(null);
-        alert("Account created successfully! Please log in.");
+        alert("Account created! Please sign in.");
         setLoading(false);
       }
-
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Unable to connect to server. Please try again later.");
+      setError(err.message || "Server connection failed.");
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-zinc-50 dark:bg-[#09090b] text-zinc-900 dark:text-white transition-colors duration-300">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#f0f2f5] dark:bg-[#030712] transition-colors duration-300 relative overflow-hidden">
       
-      {/* Background Ambience */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-cyan-500/20 rounded-full blur-[120px] animate-pulse"></div>
-         <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-violet-500/10 rounded-full blur-[100px]"></div>
-         <div className="bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 absolute inset-0"></div>
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-indigo-600"></div>
+      <div className="absolute inset-0 pointer-events-none opacity-30">
+        <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[80px]"></div>
+        <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[80px]"></div>
       </div>
 
-      {/* Theme Toggle */}
-      <button 
-        onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
-        className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-zinc-200 dark:hover:bg-white/10 backdrop-blur-sm border border-zinc-200 dark:border-white/10 transition-colors z-20"
-      >
-        {currentTheme === 'dark' ? <IconSun className="w-5 h-5" /> : <IconMoon className="w-5 h-5" />}
-      </button>
-
-      {/* Card */}
-      <div className="relative z-10 w-full max-w-md p-8">
-        <div className="mb-8 text-center">
-           <div className="w-16 h-16 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-2xl mx-auto flex items-center justify-center shadow-2xl shadow-cyan-500/20 mb-6">
-              <span className="text-white font-bold text-3xl">N</span>
+      <div className="w-full max-w-md z-10 p-4">
+        <div className="mb-10 text-center">
+           <div className="w-14 h-14 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-xl shadow-indigo-500/30 mb-6 transform rotate-3">
+              <span className="text-white font-black text-2xl">N</span>
            </div>
-           <h1 className="text-3xl font-bold tracking-tight mb-2">NexusHR</h1>
-           <p className="text-zinc-500 dark:text-zinc-400">Enterprise Workforce Management</p>
+           <h1 className="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">Welcome to NexusHR</h1>
+           <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Everything you need to work your best.</p>
         </div>
 
-        <div className="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-xl rounded-3xl border border-zinc-200 dark:border-white/10 p-8 shadow-2xl">
+        <div className="bg-white dark:bg-zinc-900 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/10 p-8">
            
-           <div className="flex gap-4 mb-8 bg-zinc-100 dark:bg-black/40 p-1.5 rounded-xl border border-zinc-200 dark:border-white/5">
+           <div className="flex gap-1 mb-8 bg-zinc-100 dark:bg-black/40 p-1 rounded-2xl border border-zinc-200 dark:border-white/5">
               <button 
-                onClick={() => { setIsLogin(true); setError(null); }}
-                className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${isLogin ? 'bg-white dark:bg-zinc-800 shadow-sm text-zinc-900 dark:text-white' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'}`}
+                onClick={() => setIsLogin(true)}
+                className={`flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${isLogin ? 'bg-white dark:bg-zinc-800 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-zinc-400 hover:text-zinc-600'}`}
               >
-                Log In
+                Login
               </button>
               <button 
-                onClick={() => { setIsLogin(false); setError(null); }}
-                className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${!isLogin ? 'bg-white dark:bg-zinc-800 shadow-sm text-zinc-900 dark:text-white' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'}`}
+                onClick={() => setIsLogin(false)}
+                className={`flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${!isLogin ? 'bg-white dark:bg-zinc-800 shadow-sm text-indigo-600 dark:text-indigo-400' : 'text-zinc-400 hover:text-zinc-600'}`}
               >
                 Sign Up
               </button>
            </div>
 
            {error && (
-             <div className="mb-6 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl flex items-center gap-3 text-red-600 dark:text-red-400 text-sm font-medium animate-in slide-in-from-top-2">
-                <IconXCircle className="w-5 h-5 shrink-0" />
+             <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl flex items-center gap-3 text-red-600 dark:text-red-400 text-xs font-bold animate-in slide-in-from-top-2">
+                <IconXCircle className="w-4 h-4 shrink-0" />
                 {error}
              </div>
            )}
 
-           <form onSubmit={handleAuth} className="space-y-4">
-              
+           <form onSubmit={handleAuth} className="space-y-5">
               {!isLogin && (
-                <div className="space-y-1.5 animate-in slide-in-from-left-2 fade-in duration-300">
-                   <label className="text-xs font-bold text-zinc-500 uppercase ml-1">Full Name</label>
-                   <div className="relative group">
-                      <IconUser className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400 group-focus-within:text-cyan-500 transition-colors" />
-                      <input 
-                        type="text" 
-                        required={!isLogin}
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder:text-zinc-400"
-                        placeholder="John Doe"
-                      />
-                   </div>
+                <div className="space-y-1.5">
+                   <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Full Name</label>
+                   <input 
+                      type="text" 
+                      required={!isLogin}
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-2xl px-4 py-3.5 text-sm focus:border-indigo-500 outline-none transition-all dark:text-white"
+                      placeholder="Enter your name"
+                   />
                 </div>
               )}
 
               <div className="space-y-1.5">
-                 <label className="text-xs font-bold text-zinc-500 uppercase ml-1">Email Address</label>
-                 <div className="relative group">
-                    <IconMail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400 group-focus-within:text-cyan-500 transition-colors" />
-                    <input 
-                      type="email" 
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder:text-zinc-400"
-                      placeholder="name@company.com"
-                    />
-                 </div>
+                 <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Email ID</label>
+                 <input 
+                    type="email" 
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-2xl px-4 py-3.5 text-sm focus:border-indigo-500 outline-none transition-all dark:text-white"
+                    placeholder="name@company.com"
+                 />
               </div>
 
               <div className="space-y-1.5">
-                 <label className="text-xs font-bold text-zinc-500 uppercase ml-1">Password</label>
-                 <div className="relative group">
-                    <IconKey className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400 group-focus-within:text-cyan-500 transition-colors" />
-                    <input 
-                      type="password" 
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder:text-zinc-400"
-                      placeholder="••••••••"
-                    />
+                 <div className="flex justify-between items-center ml-1">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Password</label>
+                    {isLogin && <button type="button" className="text-[10px] font-bold text-indigo-600 hover:underline">Forgot?</button>}
                  </div>
+                 <input 
+                    type="password" 
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-2xl px-4 py-3.5 text-sm focus:border-indigo-500 outline-none transition-all dark:text-white"
+                    placeholder="••••••••"
+                 />
               </div>
 
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl font-bold shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 transition-all transform active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed mt-6"
+                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-indigo-500/20 flex items-center justify-center transition-all transform active:scale-[0.98] disabled:opacity-50 mt-4"
               >
-                {loading ? (
-                   <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                ) : (
-                   <><IconShield className="w-5 h-5" /> {isLogin ? 'Sign In' : 'Create Account'}</>
-                )}
+                {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : (isLogin ? 'Sign In' : 'Join Nexus')}
               </button>
            </form>
+
+           <div className="mt-8 pt-8 border-t border-zinc-100 dark:border-white/5 text-center">
+              <p className="text-xs text-zinc-500">Log in with corporate SSO for secure access.</p>
+           </div>
+        </div>
+
+        <div className="mt-12 flex justify-center gap-6">
+           <button onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')} className="p-2 text-zinc-400 hover:text-indigo-600 transition-colors">
+              {currentTheme === 'dark' ? <IconSun className="w-5 h-5" /> : <IconMoon className="w-5 h-5" />}
+           </button>
         </div>
       </div>
     </div>
