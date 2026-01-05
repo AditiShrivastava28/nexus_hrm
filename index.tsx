@@ -1,9 +1,13 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
-// Fix: Declare process using the 'Process' interface to merge with existing global definitions and avoid type mismatch errors.
+/**
+ * Global declaration for process.env.API_KEY.
+ * This satisfies both the TS compiler and the build environment.
+ * We augment the existing Process and ProcessEnv interfaces to avoid type conflicts
+ * with standard environment types while providing access to API_KEY.
+ */
 declare global {
   interface ProcessEnv {
     API_KEY: string;
